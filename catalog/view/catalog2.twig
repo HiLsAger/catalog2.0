@@ -1,0 +1,251 @@
+{% set catIndex = 0 %}
+<div class="list-group row">
+	{% for category in categories %}
+		{% if category.category_id == category_id %}
+			<a data-selected="{% if catIndex == 0 %}true{% else %}false{% endif %}" class="col" href="{{ category.href }}" class="list-group-item active">{{ category.name }}</a>
+			{% if category.children %}
+				{% for child in category.children %}
+					{% if child.category_id == child_id %}
+						<a data-selected="{% if catIndex == 0 %}true{% else %}false{% endif %}" href="{{ child.href }}" class="list-group-item active">&nbsp;&nbsp;&nbsp;-
+							{{ child.name }}</a>
+					{% else %}
+						<a data-selected="{% if catIndex == 0 %}true{% else %}false{% endif %}" href="{{ child.href }}" class="list-group-item ">&nbsp;&nbsp;&nbsp;-
+							{{ child.name }}</a>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		{% else %}
+			<a data-cat-id="{{ category.category_id }}" data-selected="{% if catIndex == 0 %}true{% else %}false{% endif %}" class="col category-group" href="{{ category.href }}" class="list-group-item">{{ category.name }}</a>
+		{% endif %}
+		{% set catIndex = catIndex + 1 %}
+	{% endfor %}
+</div>
+
+{% set catIndex = 0 %}
+{% for category in categories %}
+	<div data-cat-id="{{ category.category_id }}" data-selected="{% if catIndex == 0 %}true{% else %}false{% endif %}" class="recommended_product_content">
+		{% for product in category.products %}
+			<div class="recommended_product_item product-layout product-list">
+				<div class="product-thumb">
+					{% if product.special %}
+						<div class="popularCategories_item__percent">
+							<svg xmlns="http://www.w3.org/2000/svg">
+								<use xlink:href="/image/dinikma_new_iteration/sprite.svg#icon_percent_catalog"></use>
+							</svg>
+						</div>
+					{% endif %}
+					<div class="image">
+						<a href="{{ product.href }}" title="{{ product.name }} в Москве">
+							<div class="imageProduct_list">
+								<div>
+									<img src="{{ product.thumb }}" alt="{{ product.name }} в Москве" title="{{ product.name }} в Москве" class="img-responsive categoryProductImage_one" data-link="{{ 0 }}"/>
+								</div>
+								{% for im in product.other_thumbs %}
+									<div>
+										<img src="{{ im.path }}" alt="{{ product.name }} в Москве" title="{{ product.name }} в Москве" class="img-responsive {{ im.class_1 }}" data-link="{{ im.id }}">
+									</div>
+								{% endfor %}
+							</div>
+						</a>
+					</div>
+					<div class="chooseThumb">
+						<span data-link="0"></span>
+						{% for im in product.other_thumbs %}
+							<span data-link="{{ im.id }}"></span>
+						{% endfor %}
+					</div>
+					<div>
+						<div class="caption">
+							<h4>
+								<a href="{{ product.href }}" title="{{ product.name }} в Москве">{{ product.name }}</a>
+							</h4>
+							{# <p>{{ product.description }}</p> #}
+							{% if product.rating %}
+								<div class="rating">
+									{% for i in 1..5 %}
+										{% if product.rating < i %}
+											<span class="fa fa-stack">
+												<i class="fa fa-star-o fa-stack-2x"></i>
+											</span>
+										{% else %}
+											<span class="fa fa-stack">
+												<i class="fa fa-star fa-stack-2x"></i>
+												<i class="fa fa-star-o fa-stack-2x"></i>
+											</span>
+										{% endif %}
+									{% endfor %}
+								</div>
+							{% endif %}
+							{% if (cat_id != 80) and (path_id != 80) %}
+								<p class="price">
+									{% if not product.special %}
+										<span class="price-normal">{{ product.price }}</span>
+									{% else %}
+										<span class="price-new">{{ product.special }}</span>
+										<span class="price-old">{{ product.price }}</span>
+										<span class="pricePercent">{{ product.percent }}</span>
+									{% endif %}
+									{# {% if product.tax %}
+																																																																																																																																																																																																																																																																																																																																																																																																																																																                          <span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+																																																																																																																																																																																																																																																																																																																																																																																																																																																                        {% endif %} #}
+								</p>
+							{% endif %}
+							<div class="sample_colors">
+								{% if product.colors %}
+									{% for option in product.colors %}
+										<span class="sample__colors__item {% if loop.index > 4 %}more-four-color{% endif %} {% if option.selected %}selected{% endif %}">
+											<a href="/{{ option.variation_product }}"><img src="{{ option.image }}" title="{{ option.name }}" alt="{{ option.name }}"></a>
+										</span>
+									{% endfor %}
+
+									<span>
+										<a href="#" class="addNumber__colors">+113</a>
+									</span>
+
+
+									{% if product.colors|length > 4 and option.type == 'color' %}
+										<span class="show-more-colors">
+											<a href="{{ product.href }}" title="{{ product.name }}">+
+												{{ product.colors|length - 4}}</a>
+										</span>
+
+									{% endif %}
+								{% else %}
+									<span class="empty-colors"></span>
+								{% endif %}
+							</div>
+							<p>
+								{% if product.sized_attr %}
+									<span>{{ product.sized_attr.name }}</span>
+									<span>{{ product.sized_attr.text }}</span>
+								{% endif %}
+							</p>
+						</div>
+					</div>
+					<button class="addCart" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+						<span class="">
+							Подробнее
+						</span>
+					</button>
+					<button class="addWishlist {% if product.in_wishlist %}{{ product.in_wishlist }}{% endif %}" type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');">
+						<svg xmlns="http://www.w3.org/2000/svg">
+							<use xlink:href="/image/dinikma_new_iteration/sprite.svg#icon_heart"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+
+			{# <div class="recommended_product_item product-layout ">
+													<div class="product-thumb transition">
+														<div class="image">
+															<a href="{{ product.href }}" class="12221">
+																<div class="imageProduct_list">
+																	<div>
+																		<img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" data-link="{{ 0 }}" data-scr-app="150"/>
+																	</div>
+																	{% for im in product.other_thumbs %}
+																		<div>
+																			<img src="{{ im.path }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive {{ im.class_1 }}" data-link="{{ im.id }}"/>
+																		</div>
+																	{% endfor %}
+																</div>
+															</a>
+														</div>
+														<div class="chooseThumb">
+															<span data-link="0"></span>
+															{% for im in product.other_thumbs %}
+																<span data-link="{{ im.id }}"></span>
+															{% endfor %}
+														</div>
+									
+									
+														<div class="sample_colors">
+															{% if product.colors %}
+																{% for option in product.colors %}
+																	<span class="sample__colors__item {% if loop.index > 4 %}more-four-color{% endif %} {% if option.selected %}selected{% endif %}">
+																		<a href="/{{ option.variation_product }}"><img src="{{ option.image }}" title="{{ option.name }}" alt="{{ option.name }}"></a>
+																	</span>
+																{% endfor %}
+									
+																<span>
+																	<a href="#" class="addNumber__colors">+113</a>
+																</span>
+									
+									
+																{% if product.colors|length > 4 and option.type == 'color' %}
+																	<span class="show-more-colors">
+																		<a href="{{ product.href }}" title="{{ product.name }}">+
+																			{{ product.colors|length - 4}}</a>
+																	</span>
+									
+																{% endif %}
+															{% else %}
+																<span class="empty-colors"></span>
+															{% endif %}
+														</div>
+														<p>
+															{% if product.sized_attr %}
+																<span>{{ product.sized_attr.name }}</span>
+																<span>{{ product.sized_attr.text }}</span>
+															{% endif %}
+														</p>
+									
+														<div>
+															<div class="caption">
+																<h4 data-scr-app="150">
+																	<a href="{{ product.href }}">{{ product.name }}</a>
+																</h4>
+																{% if product.rating %}
+																	<div class="rating">
+																		{% for i in 5 %}
+																			{% if product.rating < i %}
+																				<span class="fa fa-stack">
+																					<i class="fa fa-star-o fa-stack-2x"></i>
+																				</span>
+																			{% else %}
+																				<span class="fa fa-stack">
+																					<i class="fa fa-star fa-stack-2x"></i>
+																					<i class="fa fa-star-o fa-stack-2x"></i>
+																				</span>
+																			{% endif %}
+																		{% endfor %}
+																	</div>
+																{% endif %}
+																{% if product.price %}
+																	<p class="price" data-scr-app="150">
+																		{% if not product.special %}
+																			{{ product.price }}
+																		{% else %}
+																			<span class="price-new">{{ product.special }}</span>
+																			<span class="price-old">{{ product.price }}</span>
+																		{% endif %}
+																		{% if product.tax %}
+																			<span class="price-tax">{{ text_tax }}
+																				{{ product.tax }}</span>
+																		{% endif %}
+																	</p>
+																{% endif %}
+																<p>
+																	{% if product.sized_attr %}
+																		<span>{{ product.sized_attr.name }}</span>
+																		<span>{{ product.sized_attr.text }}</span>
+																	{% endif %}
+																</p>
+															</div>
+														</div>
+														<button class="addCart" type="button" onclick="cart.add('{{ product.product_id }}');">
+															<span >
+																Подробнее
+															</span>
+														</button>
+														<button class="addWishlist {% if product.in_wishlist %}{{ product.in_wishlist }}{% endif %}" type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');">
+															<svg xmlns="http://www.w3.org/2000/svg">
+																<use xlink:href="/image/dinikma_new_iteration/sprite.svg#icon_heart"></use>
+															</svg>
+														</button>
+													</div>
+												</div> #}
+		{% endfor %}
+	</div>
+	{% set catIndex = catIndex + 1 %}
+{% endfor %}
